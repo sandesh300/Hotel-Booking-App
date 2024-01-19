@@ -1,4 +1,4 @@
 package com.hotelbooking.service;
 
-public class RoomServiceImpl {
+public class BookedRoomServiceImpl {
 }
