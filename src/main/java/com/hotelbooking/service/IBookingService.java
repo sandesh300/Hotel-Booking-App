@@ -1,5 +1,6 @@
 package com.hotelbooking.service;
 
+import com.hotelbooking.exception.ResourceNotFoundException;
 import com.hotelbooking.model.BookedRoom;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public interface IBookingService {
 
     String saveBooking(Long roomId, BookedRoom bookingRequest);
 
-    BookedRoom findByBookingConfirmationCode(String confirmationCode);
+    BookedRoom findByBookingConfirmationCode(String confirmationCode) throws ResourceNotFoundException;
 
     List<BookedRoom> getAllBookings();
 
