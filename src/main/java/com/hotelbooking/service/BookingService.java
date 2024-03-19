@@ -67,7 +67,7 @@ public class BookingService implements IBookingService {
         }else{
             throw  new InvalidBookingRequestException("Sorry, This room is not available for the selected dates;");
         }
-//        return bookingRequest.getBookingConfirmationCode();
+        return bookingRequest.getBookingConfirmationCode();
     }
 
     @Override
