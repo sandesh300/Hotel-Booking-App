@@ -17,12 +17,13 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UserService implements IUserService{
+
 private final UserRepository userRepository;
 private final PasswordEncoder passwordEncoder;
 private final RoleRepository roleRepository;
     @Override
     public User registerUser(User user) {
-        if(userRepository.existsByEmail(user.getEmail())){
+        if(userRepository.existByEmail(user.getEmail())){
          throw  new UserAlreadyExistsException(user.getEmail() + "already exists");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
