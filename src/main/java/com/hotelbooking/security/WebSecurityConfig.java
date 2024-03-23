@@ -3,9 +3,11 @@ package com.hotelbooking.security;
 import com.hotelbooking.security.User.HotelUserDetailsService;
 import com.hotelbooking.security.jwt.AuthTokenFilter;
 import com.hotelbooking.security.jwt.JwtAuthEntryPoint;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -17,6 +19,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+
 
 @Configuration
 @RequiredArgsConstructor
@@ -30,12 +34,12 @@ public class WebSecurityConfig {
         return new AuthTokenFilter();
     }
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public DaoAuthenticationProvider authenticationProvider(){
+    public DaoAuthenticationProvider authenticationProvider() {
         var authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
@@ -52,8 +56,11 @@ public class WebSecurityConfig {
         http.csrf(AbstractHttpConfigurer :: disable)
                 .exceptionHandling(
                         exception -> exception.authenticationEntryPoint(jwtAuthEntryPoint))
-                .sessionManagement(session ->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers("").permitAll().anyRequest().authenticated());
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/**", "/rooms/**","/bookings/**")
+                        .permitAll().requestMatchers("/roles/**").hasRole("ADMIN")
+                        .anyRequest().authenticated());
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(authenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();

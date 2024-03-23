@@ -14,12 +14,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
-
+public class JwtAuthEntryPoint  implements AuthenticationEntryPoint {
 
     @Override
-    public void commence(HttpServletRequest request,
-                         HttpServletResponse response,
+    public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -35,3 +33,7 @@ public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
         mapper.writeValue(response.getOutputStream(), body);
     }
 }
+
+
+
+
