@@ -7,7 +7,6 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class JwtResponse {
-
     private Long id;
     private String email;
     private String token;
@@ -18,7 +17,6 @@ public class JwtResponse {
         this.id = id;
         this.email = email;
         this.token = token;
-        this.type = type;
         this.roles = roles;
     }
 }

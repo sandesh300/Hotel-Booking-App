@@ -14,34 +14,33 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.FOUND;
 
 @RestController
-@RequestMapping("/api/roles")
+@RequestMapping("/roles")
 @RequiredArgsConstructor
 public class RoleController {
     private final IRoleService roleService;
 
     @GetMapping("/all-roles")
     public ResponseEntity<List<Role>> getAllRoles(){
-        return new ResponseEntity<List<Role>>(roleService.getRoles(), FOUND);
+        return new ResponseEntity<>(roleService.getRoles(), FOUND);
     }
 
     @PostMapping("/create-new-role")
     public ResponseEntity<String> createRole(@RequestBody Role theRole){
-        try {
+        try{
             roleService.createRole(theRole);
-            return ResponseEntity.ok("New Role Created Successfully..");
-        }catch(RoleAlreadyExistException e){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+            return ResponseEntity.ok("New role created successfully!");
+        }catch(RoleAlreadyExistException re){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(re.getMessage());
+
         }
     }
-
     @DeleteMapping("/delete/{roleId}")
     public void deleteRole(@PathVariable("roleId") Long roleId){
         roleService.deleteRole(roleId);
     }
-
     @PostMapping("/remove-all-users-from-role/{roleId}")
     public Role removeAllUsersFromRole(@PathVariable("roleId") Long roleId){
-        return roleService.removeUsersFromRole(roleId);
+        return roleService.removeAllUsersFromRole(roleId);
     }
 
     @PostMapping("/remove-user-from-role")
@@ -50,7 +49,6 @@ public class RoleController {
             @RequestParam("roleId") Long roleId){
         return roleService.removeUserFromRole(userId, roleId);
     }
-
     @PostMapping("/assign-user-to-role")
     public User assignUserToRole(
             @RequestParam("userId") Long userId,

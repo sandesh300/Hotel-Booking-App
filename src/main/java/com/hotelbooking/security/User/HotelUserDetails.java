@@ -33,6 +33,7 @@ public class HotelUserDetails implements UserDetails {
                 user.getEmail(),
                 user.getPassword(),
                 authorities);
+
     }
 
 

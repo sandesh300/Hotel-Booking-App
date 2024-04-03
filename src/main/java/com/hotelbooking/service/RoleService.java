@@ -1,6 +1,7 @@
 package com.hotelbooking.service;
 
 import com.hotelbooking.exception.RoleAlreadyExistException;
+import com.hotelbooking.exception.UserAlreadyExistsException;
 import com.hotelbooking.model.Role;
 import com.hotelbooking.model.User;
 import com.hotelbooking.repository.RoleRepository;
@@ -14,7 +15,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class RoleService implements IRoleService{
+public class RoleService implements IRoleService {
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
 
@@ -27,15 +28,15 @@ public class RoleService implements IRoleService{
     public Role createRole(Role theRole) {
         String roleName = "ROLE_"+theRole.getName().toUpperCase();
         Role role = new Role(roleName);
-        if (roleRepository.existsByName(role)){
-            throw new RoleAlreadyExistException(theRole.getName()+"Role Already Exists");
+        if (roleRepository.existsByName(roleName)){
+            throw new RoleAlreadyExistException(theRole.getName()+" role already exists");
         }
         return roleRepository.save(role);
     }
 
     @Override
     public void deleteRole(Long roleId) {
-        this.removeUsersFromRole(roleId);
+        this.removeAllUsersFromRole(roleId);
         roleRepository.deleteById(roleId);
     }
 
@@ -47,7 +48,7 @@ public class RoleService implements IRoleService{
     @Override
     public User removeUserFromRole(Long userId, Long roleId) {
         Optional<User> user = userRepository.findById(userId);
-        Optional<Role> role = roleRepository.findById(roleId);
+        Optional<Role>  role = roleRepository.findById(roleId);
         if (role.isPresent() && role.get().getUsers().contains(user.get())){
             role.get().removeUserFromRole(user.get());
             roleRepository.save(role.get());
@@ -59,12 +60,12 @@ public class RoleService implements IRoleService{
     @Override
     public User assignRoleToUser(Long userId, Long roleId) {
         Optional<User> user = userRepository.findById(userId);
-        Optional<Role> role = roleRepository.findById(roleId);
-        if(user.isPresent() && user.get().getRoles().contains(role.get())){
-            throw new RoleAlreadyExistException(
-                    user.get().getFirstName()+"is already assigned to the"+role.get().getName()+"role");
+        Optional<Role>  role = roleRepository.findById(roleId);
+        if (user.isPresent() && user.get().getRoles().contains(role.get())){
+            throw new UserAlreadyExistsException(
+                    user.get().getFirstName()+ " is already assigned to the" + role.get().getName()+ " role");
         }
-        if(role.isPresent()){
+        if (role.isPresent()){
             role.get().assignRoleToUser(user.get());
             roleRepository.save(role.get());
         }
@@ -72,9 +73,9 @@ public class RoleService implements IRoleService{
     }
 
     @Override
-    public Role removeUsersFromRole(Long roleId) {
+    public Role removeAllUsersFromRole(Long roleId) {
         Optional<Role> role = roleRepository.findById(roleId);
-        role.get().removeAllUsersFromRole();
+        role.ifPresent(Role::removeAllUsersFromRole);
         return roleRepository.save(role.get());
     }
 }
